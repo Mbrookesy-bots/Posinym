@@ -11,13 +11,13 @@ with open("../config.txt", "r") as config:
     authApiKey = file[6][19:69]
     authApiSecret = file[8][26:72]
 
-    auth = tweepy.OAuthHandler(consumerApiKey, consumerApiSecretKey)
-    auth.set_access_token(authApiKey, authApiSecret)
+auth = tweepy.OAuthHandler(consumerApiKey, consumerApiSecretKey)
+auth.set_access_token(authApiKey, authApiSecret)
 
-    api = tweepy.API(auth)
+api = tweepy.API(auth)
 
-    try:
-        api.verify_credentials()
-        print("Authentication OK")
-    except:
-        print("Error")
+try:
+    api.verify_credentials()
+    print("Authentication OK")
+except:
+    print("Error")
