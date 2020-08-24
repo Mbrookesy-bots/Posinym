@@ -1,23 +1,13 @@
 import tweepy
+import json
 
 #Gather data from config file for authentication
-with open("../config.txt", "r") as config:
+with open("../config.json", "r") as file:
+    config = json.load(file)
 
-    file = config.readlines()
+auth = tweepy.OAuthHandler(config["consumerApiKey"], config["consumerApiSecretKey"])
+auth.set_access_token(config["authApiKey"], config["authApiSecret"])
 
-    consumerApiKey = file[0][18:44]
-    consumerApiSecretKey = file[2][25:76]
-    bearerToken = file[4][14:133]
-    authApiKey = file[6][19:69]
-    authApiSecret = file[8][26:72]
+api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
-auth = tweepy.OAuthHandler(consumerApiKey, consumerApiSecretKey)
-auth.set_access_token(authApiKey, authApiSecret)
-
-api = tweepy.API(auth)
-
-try:
-    api.verify_credentials()
-    print("Authentication OK")
-except:
-    print("Error")
+print(api.verify_credentials())
