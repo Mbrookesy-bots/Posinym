@@ -1,13 +1,38 @@
 import tweepy
-import json
+import logging
+from authApi import createApi
+import time
 
-#Gather data from config file for authentication
-with open("../config.json", "r") as file:
-    config = json.load(file)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
 
-auth = tweepy.OAuthHandler(config["consumerApiKey"], config["consumerApiSecretKey"])
-auth.set_access_token(config["authApiKey"], config["authApiSecret"])
 
-api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+def check_mentions(api, keywords, sinceId):
+    logger.info("Retrieving mentions")
+    newSinceId = sinceId
+    for tweet in tweepy.Cursor(api.mentions_timeline, sinceId=sinceId).items():
+        newSinceId = max(tweet.id, newSinceId)
+        if tweet.in_reply_to_status_id is not None:
+            continue
+        if any(keyword in tweet.text.lower() for keyword in keywords):
+            logger.info(f"Answering to {tweet.user.name}")
 
-print(api.verify_credentials())
+            api.update_status(
+                status="Please reach us via DM",
+                in_reply_to_status_id=tweet.id,
+                auto_populate_reply_metadata=True,
+            )
+    return newSinceId
+
+
+def main():
+    api = createApi()
+    sinceId = 1
+    while True:
+        sinceId = check_mentions(api, "positive", sinceId)
+        logger.info("Waiting...")
+        time.sleep(60)
+
+
+if __name__ == "__main__":
+    main()
