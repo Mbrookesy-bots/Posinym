@@ -1,6 +1,7 @@
 import tweepy
 import logging
 from authApi import createApi
+from convertStatus import convertToAntonym
 import time
 
 logging.basicConfig(level=logging.INFO)
@@ -16,9 +17,8 @@ def check_mentions(api, keywords, sinceId):
             continue
         if any(keyword in tweet.text.lower() for keyword in keywords):
             logger.info(f"Answering to {tweet.user.name}")
-
             api.update_status(
-                status="Please reach us via DM",
+                status=convertToAntonym(tweet.text),
                 in_reply_to_status_id=tweet.id,
                 auto_populate_reply_metadata=True,
             )
