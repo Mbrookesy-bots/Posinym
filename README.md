@@ -1,4 +1,9 @@
-# Posinym
+# [COMPLETE] Posinym 
+
+### Dependencies
+- tweepy 3.9.0
+
+### About
 Twitter bot for converting tweets to their antonym counterparts
 
 Account: https://twitter.com/Posinym
